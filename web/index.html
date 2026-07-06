@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Korean Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="masthead">
+        <div class="masthead-core">
+          <img
+            class="masthead-plant"
+            src="assets/plant.png"
+            alt=""
+            width="162"
+            height="320"
+            decoding="async"
+            aria-hidden="true"
+          />
+          <div class="masthead-stack">
+            <h1>한국학</h1>
+            <fieldset class="language-switch" aria-label="Language selection">
+              <legend class="sr-only">Input language</legend>
+              <span class="switch-thumb" aria-hidden="true"></span>
+              <label class="switch-option">
+                <input type="radio" name="language" value="english" checked />
+                <span>English</span>
+              </label>
+              <label class="switch-option">
+                <input type="radio" name="language" value="korean" />
+                <span>Korean</span>
+              </label>
+            </fieldset>
+          </div>
+        </div>
+        <div class="folder-picker">
+          <div class="folder-dropdown">
+            <div class="folder-dropdown-control">
+              <button
+                type="button"
+                class="folder-dropdown-trigger"
+                id="saver-folder-trigger"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="saver-folder-menu"
+                aria-label="Image folder"
+                disabled
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM8 13V15H6V13H8ZM13 13V15H11V13H13ZM18 13V15H16V13H18ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"
+                  ></path>
+                </svg>
+              </button>
+              <span
+                class="folder-dropdown-value"
+                id="saver-folder-label"
+              ></span>
+            </div>
+            <ul
+              class="folder-dropdown-menu"
+              id="saver-folder-menu"
+              role="listbox"
+              aria-label="Image folder"
+              hidden
+            ></ul>
+            <input type="hidden" id="saver-folder" value="" />
+          </div>
+        </div>
+      </header>
+
+      <section class="editor-panel">
+        <textarea
+          id="card-input"
+          name="card-input"
+          aria-label="Card data"
+          placeholder="Paste card data here..."
+          spellcheck="false"
+        ></textarea>
+      </section>
+
+      <footer class="actions">
+        <p id="status" class="status" aria-live="polite"></p>
+        <button id="prepare-button" type="button">Prepare cards</button>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
