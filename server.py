@@ -1,18 +1,15 @@
 import asyncio
-import sys
 from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
-SRC_DIR = Path(__file__).resolve().parent.parent
-WEB_DIR = Path(__file__).resolve().parent / "web"
-sys.path.insert(0, str(SRC_DIR))
-
-from create_anki_cards import (  # noqa: E402
+from create_anki_cards import (
     list_korean_saver_folders,
     process_text,
     read_input_cards_file,
 )
+
+WEB_DIR = Path(__file__).resolve().parent / "web"
 
 app = Flask(__name__, static_folder=str(WEB_DIR), static_url_path="")
 

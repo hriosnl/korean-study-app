@@ -4,3 +4,4 @@ __pycache__/
 .env
 .venv/
 myenv/
+anki_audio_config.json
