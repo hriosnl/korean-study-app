@@ -27,18 +27,32 @@ OUTPUT_FILENAMES = {
 
 def find_project_root() -> Path:
     current = APP_DIR
-    for _ in range(5):
-        if (current / "KoreanSaver").is_dir() or (current / "anki").is_dir():
+    saver_match = None
+
+    for _ in range(6):
+        has_saver = (current / "KoreanSaver").is_dir()
+        has_anki = (current / "anki").is_dir()
+
+        if has_saver and has_anki:
             return current
+        if has_saver and saver_match is None:
+            saver_match = current
+        if has_anki and saver_match is None:
+            saver_match = current
+
         if current.parent == current:
             break
         current = current.parent
+
+    if saver_match is not None:
+        return saver_match
+
     return APP_DIR.parent.parent
 
 
-PROJECT_ROOT = find_project_root()
-ANKI_DIR = PROJECT_ROOT / "anki"
-KOREAN_SAVER_DIR = PROJECT_ROOT / "KoreanSaver"
+def project_paths() -> tuple[Path, Path, Path]:
+    root = find_project_root()
+    return root, root / "anki", root / "KoreanSaver"
 
 
 def get_anki_media_dir(interactive: bool = True) -> Path:
@@ -67,12 +81,13 @@ def get_anki_media_dir(interactive: bool = True) -> Path:
 
 
 def list_korean_saver_folders() -> list[str]:
-    if not KOREAN_SAVER_DIR.exists():
+    _, _, korean_saver_dir = project_paths()
+    if not korean_saver_dir.exists():
         return []
 
     folders = [
         path.name
-        for path in KOREAN_SAVER_DIR.iterdir()
+        for path in korean_saver_dir.iterdir()
         if path.is_dir() and not path.name.startswith(".")
     ]
     return sorted(folders, reverse=True)
@@ -85,8 +100,9 @@ def resolve_saver_folder(saver_folder: str) -> Path:
     if not saver_folder or saver_folder != Path(saver_folder).name:
         raise ValueError("Invalid KoreanSaver folder.")
 
-    folder_path = (KOREAN_SAVER_DIR / saver_folder).resolve()
-    if folder_path.parent != KOREAN_SAVER_DIR.resolve():
+    _, _, korean_saver_dir = project_paths()
+    folder_path = (korean_saver_dir / saver_folder).resolve()
+    if folder_path.parent != korean_saver_dir.resolve():
         raise ValueError("Invalid KoreanSaver folder.")
     if not folder_path.is_dir():
         raise FileNotFoundError(f"KoreanSaver folder not found: {saver_folder}")
@@ -256,6 +272,9 @@ async def prepare_cards(
         escapechar="\\",
     )
 
+    if not output_file.is_file() or output_file.stat().st_size == 0:
+        raise OSError(f"Failed to write output file: {output_file}")
+
     result = {
         "output_file": str(output_file),
         "output_filename": output_file.name,
@@ -293,17 +312,18 @@ async def process_text(
         raise ValueError("Nothing to process.")
 
     cards = parse_cards(cleaned)
-    output_file = ANKI_DIR / OUTPUT_FILENAMES[language]
+    project_root, anki_dir, korean_saver_dir = project_paths()
+    output_file = anki_dir / OUTPUT_FILENAMES[language]
 
     if language == "korean":
         if not saver_folder:
             raise ValueError("Choose a KoreanSaver folder for Korean cards.")
-        image_dir = KOREAN_SAVER_DIR / saver_folder
+        image_dir = korean_saver_dir / saver_folder
         if not image_dir.is_dir():
             raise FileNotFoundError(f"KoreanSaver folder not found: {saver_folder}")
         image_search_dirs = [image_dir]
     else:
-        image_search_dirs = [ANKI_DIR]
+        image_search_dirs = [anki_dir]
 
     result = await prepare_cards(
         cards,
@@ -312,6 +332,7 @@ async def process_text(
         interactive=interactive,
     )
     result["language"] = language
+    result["project_root"] = str(project_root)
     if saver_folder:
         result["saver_folder"] = saver_folder
     return result
@@ -324,10 +345,11 @@ async def process_file(input_path: Path, interactive: bool = True) -> dict:
     cards = parse_cards(input_path.read_text(encoding="utf-8"))
     input_dir = input_path.parent
     search_dirs = [input_dir]
-    if KOREAN_SAVER_DIR.exists():
+    _, _, korean_saver_dir = project_paths()
+    if korean_saver_dir.exists():
         search_dirs.extend(
             sorted(
-                (p for p in KOREAN_SAVER_DIR.iterdir() if p.is_dir()),
+                (p for p in korean_saver_dir.iterdir() if p.is_dir()),
                 reverse=True,
             )
         )

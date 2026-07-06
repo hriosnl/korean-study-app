@@ -210,7 +210,7 @@ prepareButton.addEventListener("click", async () => {
 
     setStatus(
       [
-        `Saved ${result.output_filename}.`,
+        `Saved to ${result.output_file}`,
         `${result.card_count} cards.`,
         `Audio: ${result.audio_generated} new, ${result.audio_reused} reused.`,
         `Images: ${result.images_copied} copied, ${result.images_reused} reused, ${result.images_missing} missing.`,

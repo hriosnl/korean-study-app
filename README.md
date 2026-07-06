@@ -88,6 +88,8 @@ If `input-cards.txt` is empty, a warning is shown in the textarea instead.
 | English | `anki/English-to-KR.tsv` | `anki/`          |
 | Korean  | `anki/Korean-to-EN.tsv`  | `KoreanSaver/{date}/` |
 
+Output is written to the `anki/` folder at the project root (the directory that contains `KoreanSaver/`), not inside the app repo. The success message shows the full saved path.
+
 Generated audio and copied images are placed in your Anki `collection.media` folder.
 
 ## Project structure
